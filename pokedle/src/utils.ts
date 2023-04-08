@@ -1,4 +1,5 @@
-function randomPokemonGenerator(generation) {
+
+export function randomPokemonGenerator(generation) {
     let genDexNumbers = {
         1: 151,
         2: 251,
@@ -11,4 +12,8 @@ function randomPokemonGenerator(generation) {
     }
     return Math.floor(Math.random() * genDexNumbers[generation]) + 1;
 
+}
+
+export function compareGuess(actual,guess){
+    const correct: [number, number,number,] = [actual.weight,actual.height,]
 }
