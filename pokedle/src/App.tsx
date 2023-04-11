@@ -2,7 +2,7 @@ import * as React from 'react'
 import { BrowserRouter, Routes, Route } from 'react-router-dom'
 import { Home } from './components/Home';
 import { GameScreen } from './components/GameScreen';
-import './styles.css' 
+//import './styles.css' 
 
 export function App() {
 

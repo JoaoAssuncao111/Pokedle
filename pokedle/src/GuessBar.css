@@ -1,0 +1,28 @@
+.pokemon-search {
+    position: relative;
+  }
+  
+  .pokemon-dropdown {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    z-index: 1;
+    max-height: 200px;
+    overflow-y: scroll;
+    background-color: white;
+    border: 1px solid gray;
+    border-top: none;
+    border-radius: 0 0 4px 4px;
+  }
+  
+  .pokemon-option {
+    display: flex;
+    align-items: center;
+    padding: 8px;
+    cursor: pointer;
+  }
+  
+  .pokemon-option:hover {
+    background-color: #f2f2f2;
+  }
+  
