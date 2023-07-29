@@ -1,58 +1,69 @@
-import * as React from "react"
-import { useState, useEffect } from "react"
-import { Link, useParams } from 'react-router-dom'
-import { randomPokemonGenerator } from '../utils'
-import { Pokemon } from "../Pokemon"
-import GuessBar from "./GuessBar"
+import React, { useState } from 'react';
+import { useParams } from 'react-router-dom';
+import { randomPokemonGenerator } from '../utils';
+import { Pokemon } from '../Pokemon';
+import GuessBar from './GuessBar';
+import { PokemonList } from './PokemonList';
 
 export function GameScreen() {
-    
-    //[height, weight, gen introduced, gender ratio, types, can evolve, is evolved]
-    const { gameMode } = useParams()
-    const [guesses, setGuesses] = useState([])
-    const [mysteryPokemon, setMysteryPokemon] = useState<Pokemon|null>(null)
-    const [pictureUrl, setPictureUrl] = useState()
-    
-    async function handleGenerateButtonClick() {
-        fetchPokemon(gameMode)
-        console.log(mysteryPokemon)
+  const { gameMode } = useParams();
+  const [guesses, setGuesses] = useState([]);
+  const [mysteryPokemon, setMysteryPokemon] = useState(null);
+  const [pictureUrl, setPictureUrl] = useState(null);
+  const [comparisonResult, setComparisonResult] = useState([]);
+
+  function handleGenerateButtonClick() {
+    fetchPokemon(gameMode);
+    setComparisonResult([]);
+  }
+
+  async function fetchPokemon(gen) {
+    try {
+      const response = await fetch(`https://pokeapi.co/api/v2/pokemon/${randomPokemonGenerator(gen)}`);
+      const pokemon = await response.json();
+      if (pokemon) {
+        setMysteryPokemon(pokemon);
+        setPictureUrl(pokemon.sprites.front_default);
+      }
+    } catch (error) {
+      console.log(error);
     }
+  }
 
+  function handleComparisonResult(result) {
+    setComparisonResult(result);
+  }
 
-    async function fetchPokemon(gen) {
+  return (
+    <div>
+      <div>
+        {mysteryPokemon ? (
+          <>
+            <text>{mysteryPokemon.forms[0].name}</text>
+            <img src={pictureUrl} alt={mysteryPokemon.forms[0].name} />
+          </>
+        ) : null}
+      </div>
 
-        try {
-            const response = await fetch(`https://pokeapi.co/api/v2/pokemon/${randomPokemonGenerator(gen)}`)
-            const pokemon = await response.json()
-            if (pokemon) {
-                setMysteryPokemon(pokemon)
-                setPictureUrl(pokemon.sprites.front_default)
-            }
-        }
-        catch (error) {
-            console.log(error)
-            return
-        }
+      <div>
+        <button onClick={handleGenerateButtonClick}>GENERATE!</button>
+      </div>
+      <PokemonList
+        mysteryPokemon={mysteryPokemon}
+        generation={gameMode}
+        onComparisonResult={handleComparisonResult}
+      />
 
-    }
-
-
-    return (<div>
+      {comparisonResult.length > 0 && (
         <div>
-            {mysteryPokemon ? (
-                <>
-                    <text>{mysteryPokemon.forms[0].name}</text>
-                    <img src={pictureUrl} />
-                </>
-            ) : null}
+          <h2>Comparison Result:</h2>
+          <ul>
+            {comparisonResult.map((result, index) => (
+              <li key={index}>{result}</li>
+            ))}
+          </ul>
         </div>
-        <div>
-            <button onClick={handleGenerateButtonClick}>GENERATE!</button>
-        </div>
-        <GuessBar mysteryPokemon={mysteryPokemon}></GuessBar>
-
-    </div>)
-
-
-
+      )}
+    </div>
+  );
 }

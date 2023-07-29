@@ -1,0 +1,47 @@
+/* styles.css */
+
+/* Custom option wrapper style */
+.pokemon-option {
+    cursor: pointer;
+   
+    height: 60px; /* Increase the height of each option */
+    display: flex;
+    align-items: center;
+    padding: 5px;
+  }
+  
+  /* Pokemon info container */
+  .pokemon-info {
+    flex-grow: 1;
+    display: flex;
+    align-items: center;
+  }
+  
+  /* Image style */
+  .pokemon-image {
+    width: 100px; /* Increase the width of the image */
+    height: 100px; /* Increase the height of the image */
+   
+    margin-right: 10px;
+    flex-shrink: 0;
+  }
+  
+  /* Highlight on hover */
+  .pokemon-option:hover,
+  .pokemon-option.focused {
+    background: lightgray;
+  }
+  
+  /* Pokemon name style */
+  .pokemon-name {
+    font-weight: bold;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  
+  /* Style for the selected option */
+  .pokemon-option.selected {
+    background: lightgray;
+  }
+  
