@@ -71,36 +71,51 @@ export function compareGuess(actual, guess) {
 }
 
 export async function getPokemonDetails(pokemon) {
+    console.log(pokemon)
     const pokeresp = await fetch(`https://pokeapi.co/api/v2/pokemon/${pokemon}`)
     const pokedata = await pokeresp.json()
+    const weight = await pokedata.weight
+    const height = await pokedata.height
 
-    const resp = await fetch(pokedata.species.url);
-    const species = await resp.json();
-    const genderRatio = species.gender_rate;
+    const species_resp = await fetch(pokedata.species.url)
+    const species = await species_resp.json()
+    const genderRatio = await species.gender_rate
 
-    const hasEvolved: boolean  =  species.evolves_from_species ? true : false
-    let canEvolve = true
+    const hasEvolved: boolean = species.evolves_from_species != null ? true : false
+    console.log(`Has Evolved: ${hasEvolved}`)
+    let canEvolve = false
 
-    const evolutionChainResponse = await fetch(species.evolution_chain.url);
-    const evolutionChainData = await evolutionChainResponse.json();
-     const pokemonSpeciesData = evolutionChainData.chain.find((chainLink) => {
-      return chainLink.species.name === pokemon;
-    });
+    const evolutionChainResponse = await fetch(species.evolution_chain.url)
 
-    if (pokemonSpeciesData.evolves_to.length > 0) {
-      canEvolve = true;
-    } else {
-        canEvolve = false
+    const evolutionChainData = await evolutionChainResponse.json()
+    const evolutionChain = await evolutionChainData.chain
+    const possibleEvolutions = await evolutionChain.evolves_to
+    console.log(evolutionChainData)
+
+    let currentSpecies = await evolutionChain.species.name
+    if (currentSpecies == pokemon && evolutionChain.evolves_to.length > 0) canEvolve = true
+    else {
+
+        for (let idx = 0; idx < evolutionChain.evolves_to.length; idx++) {
+            if (possibleEvolutions[idx].species.name == pokemon) {
+                if (possibleEvolutions[idx].evolves_to.length != 0) {
+                    canEvolve = true
+                    break
+                }
+            }
+        }
     }
 
- 
+    console.log(`Can Evolve: ${canEvolve}`)
 
-    const genResp = await fetch(species.generation.url);
-    const generation = await genResp.json();
-    const segments = generation.id.split("/");
-    const genNumber = segments[5];
+    const genResp = await fetch(species.generation.url)
+    const generation = genResp.url.split("/")[6]
 
-    return [genderRatio, canEvolve, hasEvolved, genNumber];
+
+    const result = [weight, height, genderRatio, canEvolve, hasEvolved, parseInt(generation)];
+    console.log(result)
+    return result
+
 }
 
 

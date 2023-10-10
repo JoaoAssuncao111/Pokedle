@@ -14,7 +14,7 @@ const genDexNumbers = {
   8: 898, // Updated to the latest generation
 };
 
-export function PokemonList({ generation, mysteryPokemon, onComparisonResult }) {
+export function PokemonList({ generation, mysteryPokemonInfo, onComparisonResult }) {
   const [pokemonList, setPokemonList] = useState([]);
 
   useEffect(() => {
@@ -53,20 +53,10 @@ export function PokemonList({ generation, mysteryPokemon, onComparisonResult }) 
   }
 
   async function fetchAndCompare(selectedPokemonName) {
-    const mysteryPokemonInfo = [];
-    const mysteryPokemonDetails = await getPokemonDetails(mysteryPokemon.name);
-    mysteryPokemonInfo.push(
-      mysteryPokemon.weight,
-      mysteryPokemon.height,
-      mysteryPokemon.types.map(({ type }) => type.name)
-    );
-    mysteryPokemonDetails.forEach((detail) => {
-      mysteryPokemonInfo.push(detail);
-    });
 
     const response = await fetch(`https://pokeapi.co/api/v2/pokemon/${selectedPokemonName}`);
     const guessedPokemon = await response.json();
-
+/*
     if (guessedPokemon) {
       const pokemonInfo = [];
       const pokemonDetails = await getPokemonDetails(guessedPokemon.name);
@@ -77,7 +67,7 @@ export function PokemonList({ generation, mysteryPokemon, onComparisonResult }) 
 
       const result = compareGuess(mysteryPokemonInfo, pokemonInfo);
       onComparisonResult(result); // Update the comparison result in the parent component
-    }
+    }*/
   }
 
   return (
@@ -109,4 +99,4 @@ const customOptionRenderer = ({ data, innerProps, label }) => (
       </div>
     </div>
   </div>
-);
+)

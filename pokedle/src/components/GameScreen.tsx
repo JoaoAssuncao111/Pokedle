@@ -1,6 +1,6 @@
-import React, { useState } from 'react';
+import React, { useState,useEffect } from 'react';
 import { useParams } from 'react-router-dom';
-import { randomPokemonGenerator } from '../utils';
+import { randomPokemonGenerator,getPokemonDetails, compareGuess} from '../utils';
 import { Pokemon } from '../Pokemon';
 import GuessBar from './GuessBar';
 import { PokemonList } from './PokemonList';
@@ -9,11 +9,38 @@ export function GameScreen() {
   const { gameMode } = useParams();
   const [guesses, setGuesses] = useState([]);
   const [mysteryPokemon, setMysteryPokemon] = useState(null);
+  const [mysteryPokemonInfo, setMysteryPokemonInfo] = useState([])
   const [pictureUrl, setPictureUrl] = useState(null);
   const [comparisonResult, setComparisonResult] = useState([]);
 
-  function handleGenerateButtonClick() {
+  useEffect(() => {
+    async function setMysteryDetails() {
+      try {
+        const mysteryPokemonDetails = await getPokemonDetails(mysteryPokemon.name);
+  
+        const newMysteryPokemonInfo = [
+          mysteryPokemon.weight,
+          mysteryPokemon.height,
+          mysteryPokemon.types.map(({ type }) => type.name),
+          ...mysteryPokemonDetails,
+        ];
+  
+        setMysteryPokemonInfo(newMysteryPokemonInfo);
+        console.log(newMysteryPokemonInfo);
+      } catch (error) {
+        console.error("Error fetching mystery Pokemon details:", error);
+      }
+    }
+  
+    setMysteryDetails();
+  }, [mysteryPokemon]);
+  
+
+  
+
+  async  function handleGenerateButtonClick() {
     fetchPokemon(gameMode);
+    
     setComparisonResult([]);
   }
 
@@ -39,7 +66,7 @@ export function GameScreen() {
       <div>
         {mysteryPokemon ? (
           <>
-            <text>{mysteryPokemon.forms[0].name}</text>
+            <div>{mysteryPokemon.forms[0].name}</div>
             <img src={pictureUrl} alt={mysteryPokemon.forms[0].name} />
           </>
         ) : null}
@@ -49,7 +76,7 @@ export function GameScreen() {
         <button onClick={handleGenerateButtonClick}>GENERATE!</button>
       </div>
       <PokemonList
-        mysteryPokemon={mysteryPokemon}
+        mysteryPokemonInfo={mysteryPokemonInfo}
         generation={gameMode}
         onComparisonResult={handleComparisonResult}
       />
